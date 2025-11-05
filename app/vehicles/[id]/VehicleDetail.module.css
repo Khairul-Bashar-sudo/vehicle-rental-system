@@ -1,0 +1,417 @@
+.vehicleDetail {
+  min-height: calc(100vh - 80px);
+  background: var(--background);
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 0;
+}
+
+.breadcrumb a {
+  color: var(--primary);
+  transition: opacity 0.3s ease;
+}
+
+.breadcrumb a:hover {
+  opacity: 0.7;
+}
+
+.separator {
+  margin: 0 12px;
+  color: var(--text-secondary);
+}
+
+/* Not Found */
+.notFound {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+}
+
+.notFoundContent {
+  text-align: center;
+  max-width: 500px;
+}
+
+.notFoundContent h2 {
+  font-size: 2rem;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}
+
+.notFoundContent p {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+}
+
+.btnBack {
+  display: inline-block;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.btnBack:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Detail Grid */
+.detailGrid {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 32px;
+  padding: 32px 0;
+}
+
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Image */
+.imageWrapper {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--card-bg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.vehicleImage {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.availabilityBadge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.available,
+.unavailable {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  backdrop-filter: blur(10px);
+}
+
+.available {
+  background: rgba(16, 185, 129, 0.9);
+  color: white;
+}
+
+.unavailable {
+  background: rgba(239, 68, 68, 0.9);
+  color: white;
+}
+
+/* Vehicle Info */
+.vehicleInfo {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.vehicleType {
+  display: inline-block;
+  padding: 6px 12px;
+  background: #ede9fe;
+  color: var(--primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.vehicleName {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.priceTag {
+  text-align: right;
+}
+
+.priceAmount {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1;
+}
+
+.priceLabel {
+  display: block;
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.description {
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+}
+
+/* Section */
+.section {
+  margin-top: 40px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+}
+
+/* Features Grid */
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.featureItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: var(--hover-bg);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.featureItem:hover {
+  background: var(--hover-bg);
+  transform: translateY(-2px);
+}
+
+.featureIcon {
+  font-size: 1.75rem;
+}
+
+.featureContent {
+  flex: 1;
+}
+
+.featureLabel {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.featureDescription {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+/* Policies */
+.policiesList {
+  list-style: none;
+  padding: 0;
+}
+
+.policyItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.checkIcon {
+  color: #10b981;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+/* Benefits */
+.benefits {
+  display: grid;
+  gap: 20px;
+}
+
+.benefitItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+  border-radius: 12px;
+}
+
+.benefitIcon {
+  font-size: 2rem;
+}
+
+.benefitItem h3 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.benefitItem p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+/* Sidebar */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.bookingCard,
+.supportCard {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 100px;
+}
+
+.bookingTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+}
+
+.bookingSummary {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: var(--hover-bg);
+  border-radius: 12px;
+}
+
+.summaryItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.summaryLabel {
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
+.summaryValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+/* Support Card */
+.supportTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.supportText {
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.supportLink {
+  display: block;
+  padding: 12px 16px;
+  background: var(--hover-bg);
+  border-radius: 8px;
+  color: var(--primary);
+  font-weight: 500;
+  margin-bottom: 8px;
+  transition: all 0.3s ease;
+}
+
+.supportLink:hover {
+  background: #ede9fe;
+  transform: translateX(4px);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .detailGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    order: -1;
+  }
+
+  .bookingCard,
+  .supportCard {
+    position: static;
+  }
+
+  .featuresGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .header {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .priceTag {
+    text-align: left;
+    width: 100%;
+  }
+
+  .vehicleName {
+    font-size: 1.75rem;
+  }
+
+  .priceAmount {
+    font-size: 2rem;
+  }
+
+  .vehicleInfo {
+    padding: 24px;
+  }
+}

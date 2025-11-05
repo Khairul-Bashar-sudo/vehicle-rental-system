@@ -1,0 +1,249 @@
+.bookingForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.calendarIcon {
+  font-size: 1.1rem;
+  filter: grayscale(1) brightness(0.3);
+  display: inline-block;
+}
+
+[data-theme="dark"] .calendarIcon {
+  filter: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .calendarIcon {
+    filter: none;
+  }
+}
+
+.input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: var(--input-bg);
+  color: var(--text-primary);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: var(--card-bg);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.input::placeholder {
+  color: #999;
+}
+
+.dateGroup {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+}
+
+.dateInput {
+  cursor: pointer;
+  position: relative;
+  font-family: inherit;
+  padding-right: 12px;
+  min-height: 48px;
+  color-scheme: light dark;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.dateInput::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 1 !important;
+  transition: all 0.3s ease;
+  width: 20px;
+  height: 20px;
+  margin-left: 4px;
+  filter: brightness(0) invert(30%) !important;
+}
+
+[data-theme="dark"] .dateInput::-webkit-calendar-picker-indicator {
+  filter: brightness(0) invert(100%) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .dateInput::-webkit-calendar-picker-indicator {
+    filter: brightness(0) invert(100%) !important;
+  }
+}
+
+.dateInput::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+  transform: scale(1.15);
+  filter: invert(0.2);
+}
+
+[data-theme="dark"] .dateInput::-webkit-calendar-picker-indicator:hover {
+  filter: invert(1) brightness(1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .dateInput::-webkit-calendar-picker-indicator:hover {
+    filter: invert(1) brightness(1);
+  }
+}
+
+.dateInput:focus::-webkit-calendar-picker-indicator {
+  opacity: 1;
+}
+
+/* Style for date input when it has a value */
+.dateInput:valid {
+  font-weight: 500;
+  color: var(--primary);
+}
+
+/* Firefox date input styling */
+.dateInput::-moz-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.7;
+  transition: all 0.3s ease;
+}
+
+/* Price Summary */
+.priceSummary {
+  margin-top: 8px;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+  border-radius: 12px;
+  border: 2px solid #ede9fe;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.summaryValue {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.summaryTotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px;
+  margin-top: 12px;
+  border-top: 2px solid #ede9fe;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.totalValue {
+  font-size: 1.75rem;
+  color: var(--primary);
+}
+
+/* Submit Button */
+.submitButton {
+  width: 100%;
+  padding: 16px 32px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 700;
+  font-size: 1.125rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 14px rgba(102, 126, 234, 0.3);
+}
+
+.submitButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.submitButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Messages */
+.successMessage,
+.errorMessage {
+  padding: 16px;
+  border-radius: 10px;
+  font-weight: 500;
+  line-height: 1.6;
+  animation: slideIn 0.3s ease;
+}
+
+.successMessage {
+  background: var(--success-bg);
+  color: var(--success-text);
+  border: 2px solid var(--success-border);
+}
+
+.errorMessage {
+  background: var(--error-bg);
+  color: var(--error-text);
+  border: 2px solid var(--error-border);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .dateGroup {
+    grid-template-columns: 1fr;
+  }
+
+  .submitButton {
+    font-size: 1rem;
+    padding: 14px 24px;
+  }
+
+  .totalValue {
+    font-size: 1.5rem;
+  }
+}
