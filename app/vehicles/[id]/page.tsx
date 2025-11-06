@@ -1,16 +1,35 @@
-import { vehicles } from "../../../data/vehicles";
 import BookingForm from "../../components/BookingForm";
+import ProtectedBookingForm from "./ProtectedBookingForm";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./VehicleDetail.module.css";
+import type { Vehicle } from "@/types/vehicle";
 
 type Props = {
   params: Promise<{ id: string }>;
 };
 
+async function getVehicle(id: string): Promise<Vehicle | null> {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    const res = await fetch(`${baseUrl}/api/vehicles/${id}`, {
+      cache: 'no-store',
+    });
+    
+    if (!res.ok) {
+      return null;
+    }
+    
+    return res.json();
+  } catch (error) {
+    console.error('Error fetching vehicle:', error);
+    return null;
+  }
+}
+
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
-  const vehicle = vehicles.find((v) => v.id === id);
+  const vehicle = await getVehicle(id);
   return {
     title: vehicle ? `${vehicle.name} • DriveNow` : "Vehicle",
   };
@@ -18,7 +37,7 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function VehiclePage({ params }: Props) {
   const { id } = await params;
-  const vehicle = vehicles.find((v) => v.id === id);
+  const vehicle = await getVehicle(id);
 
   if (!vehicle) {
     return (
@@ -174,8 +193,8 @@ export default async function VehiclePage({ params }: Props) {
                   <span className={styles.summaryValue}>${vehicle.pricePerDay}</span>
                 </div>
               </div>
-              <BookingForm 
-                vehicleId={vehicle.id} 
+              <ProtectedBookingForm
+                vehicleId={vehicle.id}
                 vehicleName={vehicle.name}
                 pricePerDay={vehicle.pricePerDay}
               />
