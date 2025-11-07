@@ -9,7 +9,7 @@ interface BookingFormProps {
   pricePerDay: number;
 }
 
-export default function BookingForm({ vehicleName, pricePerDay }: BookingFormProps) {
+export default function BookingForm({ vehicleId, vehicleName, pricePerDay }: BookingFormProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -30,7 +30,7 @@ export default function BookingForm({ vehicleName, pricePerDay }: BookingFormPro
   const days = calculateTotal();
   const totalPrice = days * pricePerDay;
 
-  function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
     
     // Basic validation
@@ -44,13 +44,52 @@ export default function BookingForm({ vehicleName, pricePerDay }: BookingFormPro
       return;
     }
 
+    if (days <= 0) {
+      setMessage("Please select valid dates.");
+      return;
+    }
+
     setIsSubmitting(true);
+    setMessage(null);
     
-    // Simulate API call
-    setTimeout(() => {
-      setMessage(`🎉 Success! Your booking request for ${vehicleName} has been received. We'll contact you at ${email} shortly.`);
+    try {
+      const response = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          vehicle_id: vehicleId,
+          vehicle_name: vehicleName,
+          customer_name: name,
+          customer_email: email,
+          customer_phone: phone,
+          start_date: start,
+          end_date: end,
+          days: days,
+          total_price: totalPrice,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage(`🎉 Success! Your booking for ${vehicleName} has been confirmed. Check your bookings page to see details.`);
+        // Reset form
+        setName("");
+        setEmail("");
+        setPhone("");
+        setStart("");
+        setEnd("");
+      } else {
+        setMessage(`❌ Error: ${data.error || 'Failed to create booking. Please try again.'}`);
+      }
+    } catch (error) {
+      console.error('Booking error:', error);
+      setMessage("❌ Failed to create booking. Please make sure you're logged in and try again.");
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   }
 
   return (

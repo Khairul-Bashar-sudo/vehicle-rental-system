@@ -23,7 +23,9 @@ mysql -u root <<EOF
 FLUSH PRIVILEGES;
 ALTER USER 'root'@'localhost' IDENTIFIED BY 'rootpassword';
 CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\`;
+CREATE USER IF NOT EXISTS '${DB_USER}'@'localhost' IDENTIFIED BY '${DB_PASSWORD}';
 CREATE USER IF NOT EXISTS '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASSWORD}';
+GRANT ALL PRIVILEGES ON \`${DB_NAME}\`.* TO '${DB_USER}'@'localhost';
 GRANT ALL PRIVILEGES ON \`${DB_NAME}\`.* TO '${DB_USER}'@'%';
 FLUSH PRIVILEGES;
 EOF
@@ -51,7 +53,7 @@ sleep 10
 
 # Initialize database schema via API
 echo "Initializing database schema and seed data..."
-curl -X POST http://localhost:3000/api/init-db || echo "Database initialization API call completed"
+wget --post-data='' http://localhost:3000/api/init-db -O - 2>/dev/null || echo "Database initialization API call completed"
 
 echo "Setup complete - server is running"
 

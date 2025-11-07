@@ -23,11 +23,12 @@
 }
 
 .authRequired {
-  background: white;
+  background: var(--card-bg);
   padding: 3rem 2rem;
   border-radius: 12px;
   text-align: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border);
 }
 
 .authIcon {
@@ -37,13 +38,13 @@
 
 .authRequired h3 {
   margin: 0 0 0.5rem 0;
-  color: #1f2937;
+  color: var(--text-primary);
   font-size: 1.5rem;
 }
 
 .authRequired p {
   margin: 0 0 2rem 0;
-  color: #6b7280;
+  color: var(--text-secondary);
   font-size: 1rem;
 }
 
@@ -77,13 +78,13 @@
 }
 
 .btnSecondary {
-  background: white;
+  background: var(--card-bg);
   color: #667eea;
   border: 2px solid #667eea;
 }
 
 .btnSecondary:hover {
-  background: #f3f4f6;
+  background: var(--hover-bg);
 }
 
 @media (max-width: 640px) {

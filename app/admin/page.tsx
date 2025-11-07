@@ -1,40 +1,41 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import styles from "./Admin.module.css";
 
 interface DbVehicle {
-  id: number;
+  id: string;
   name: string;
   type: string;
-  capacity: number;
-  transmission: string;
-  fuel: string;
-  price_per_day: number;
+  seats: number;
+  pricePerDay: number;
   image: string;
-  features: string;
+  description: string;
+  available: boolean;
 }
 
 export default function AdminPage() {
+  const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [vehicles, setVehicles] = useState<DbVehicle[]>([]);
   const [loading, setLoading] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
   const [formData, setFormData] = useState({
+    id: "",
     name: "",
     type: "",
-    capacity: "",
-    transmission: "",
-    fuel: "",
-    price_per_day: "",
+    seats: "",
+    pricePerDay: "",
     image: "",
-    features: "",
+    description: "",
+    available: true,
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
@@ -172,8 +173,8 @@ export default function AdminPage() {
         body: JSON.stringify({
           ...formData,
           image: imageUrl,
-          capacity: parseInt(formData.capacity),
-          price_per_day: parseFloat(formData.price_per_day),
+          seats: parseInt(formData.seats),
+          pricePerDay: parseFloat(formData.pricePerDay),
         }),
       });
 
@@ -181,14 +182,14 @@ export default function AdminPage() {
         setSuccess("Vehicle added successfully!");
         await fetchVehicles();
         setFormData({
+          id: "",
           name: "",
           type: "",
-          capacity: "",
-          transmission: "",
-          fuel: "",
-          price_per_day: "",
+          seats: "",
+          pricePerDay: "",
           image: "",
-          features: "",
+          description: "",
+          available: true,
         });
         setImageFile(null);
         setImagePreview("");
@@ -230,8 +231,8 @@ export default function AdminPage() {
         body: JSON.stringify({
           ...formData,
           image: imageUrl,
-          capacity: parseInt(formData.capacity),
-          price_per_day: parseFloat(formData.price_per_day),
+          seats: parseInt(formData.seats),
+          pricePerDay: parseFloat(formData.pricePerDay),
         }),
       });
 
@@ -239,14 +240,14 @@ export default function AdminPage() {
         setSuccess("Vehicle updated successfully!");
         await fetchVehicles();
         setFormData({
+          id: "",
           name: "",
           type: "",
-          capacity: "",
-          transmission: "",
-          fuel: "",
-          price_per_day: "",
+          seats: "",
+          pricePerDay: "",
           image: "",
-          features: "",
+          description: "",
+          available: true,
         });
         setImageFile(null);
         setImagePreview("");
@@ -265,14 +266,14 @@ export default function AdminPage() {
 
   const handleEdit = (vehicle: DbVehicle) => {
     setFormData({
+      id: vehicle.id,
       name: vehicle.name,
       type: vehicle.type,
-      capacity: vehicle.capacity.toString(),
-      transmission: vehicle.transmission,
-      fuel: vehicle.fuel,
-      price_per_day: vehicle.price_per_day.toString(),
+      seats: vehicle.seats.toString(),
+      pricePerDay: vehicle.pricePerDay.toString(),
       image: vehicle.image,
-      features: vehicle.features,
+      description: vehicle.description || "",
+      available: vehicle.available,
     });
     setImagePreview(vehicle.image);
     setImageFile(null);
@@ -280,7 +281,7 @@ export default function AdminPage() {
     setShowForm(true);
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this vehicle?")) return;
 
     try {
@@ -362,6 +363,12 @@ export default function AdminPage() {
       <div className={styles.header}>
         <h1>Admin Dashboard</h1>
         <div className={styles.headerActions}>
+          <button
+            onClick={() => router.push("/admin/bookings")}
+            className={styles.btnSecondary}
+          >
+            View Bookings
+          </button>
           <button onClick={handleInitDatabase} className={styles.btnSecondary}>
             Initialize Database
           </button>
@@ -381,14 +388,14 @@ export default function AdminPage() {
             if (!showForm) {
               setEditingId(null);
               setFormData({
+                id: "",
                 name: "",
                 type: "",
-                capacity: "",
-                transmission: "",
-                fuel: "",
-                price_per_day: "",
+                seats: "",
+                pricePerDay: "",
                 image: "",
-                features: "",
+                description: "",
+                available: true,
               });
               setImageFile(null);
               setImagePreview("");
@@ -408,6 +415,23 @@ export default function AdminPage() {
             className={styles.vehicleForm}
           >
             <div className={styles.formGrid}>
+              <label className={styles.formLabel}>
+                Vehicle ID
+                <input
+                  type="text"
+                  name="id"
+                  value={formData.id}
+                  onChange={handleInputChange}
+                  required
+                  disabled={!!editingId}
+                  className={styles.formInput}
+                  placeholder="e.g., sedan-1"
+                />
+                <small className={styles.helpText}>
+                  Unique identifier (cannot be changed after creation)
+                </small>
+              </label>
+
               <label className={styles.formLabel}>
                 Vehicle Name
                 <input
@@ -431,20 +455,21 @@ export default function AdminPage() {
                   className={styles.formInput}
                 >
                   <option value="">Select type</option>
-                  <option value="sedan">Sedan</option>
-                  <option value="suv">SUV</option>
-                  <option value="truck">Truck</option>
-                  <option value="van">Van</option>
-                  <option value="sports">Sports</option>
+                  <option value="Sedan">Sedan</option>
+                  <option value="SUV">SUV</option>
+                  <option value="Truck">Truck</option>
+                  <option value="Van">Van</option>
+                  <option value="Coupe">Coupe</option>
+                  <option value="Motorcycle">Motorcycle</option>
                 </select>
               </label>
 
               <label className={styles.formLabel}>
-                Capacity (seats)
+                Seats
                 <input
                   type="number"
-                  name="capacity"
-                  value={formData.capacity}
+                  name="seats"
+                  value={formData.seats}
                   onChange={handleInputChange}
                   required
                   min="1"
@@ -453,43 +478,11 @@ export default function AdminPage() {
               </label>
 
               <label className={styles.formLabel}>
-                Transmission
-                <select
-                  name="transmission"
-                  value={formData.transmission}
-                  onChange={handleInputChange}
-                  required
-                  className={styles.formInput}
-                >
-                  <option value="">Select transmission</option>
-                  <option value="automatic">Automatic</option>
-                  <option value="manual">Manual</option>
-                </select>
-              </label>
-
-              <label className={styles.formLabel}>
-                Fuel Type
-                <select
-                  name="fuel"
-                  value={formData.fuel}
-                  onChange={handleInputChange}
-                  required
-                  className={styles.formInput}
-                >
-                  <option value="">Select fuel type</option>
-                  <option value="petrol">Petrol</option>
-                  <option value="diesel">Diesel</option>
-                  <option value="electric">Electric</option>
-                  <option value="hybrid">Hybrid</option>
-                </select>
-              </label>
-
-              <label className={styles.formLabel}>
                 Price per Day ($)
                 <input
                   type="number"
-                  name="price_per_day"
-                  value={formData.price_per_day}
+                  name="pricePerDay"
+                  value={formData.pricePerDay}
                   onChange={handleInputChange}
                   required
                   step="0.01"
@@ -533,15 +526,33 @@ export default function AdminPage() {
               )}
 
               <label className={styles.formLabel}>
-                Features (comma-separated)
+                Description
                 <input
                   type="text"
-                  name="features"
-                  value={formData.features}
+                  name="description"
+                  value={formData.description}
                   onChange={handleInputChange}
                   className={styles.formInput}
-                  placeholder="e.g., GPS, Bluetooth, Backup Camera"
+                  placeholder="e.g., Spacious SUV with room for luggage and family"
                 />
+              </label>
+
+              <label className={styles.formLabel}>
+                Available
+                <select
+                  name="available"
+                  value={formData.available ? "true" : "false"}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      available: e.target.value === "true",
+                    }))
+                  }
+                  className={styles.formInput}
+                >
+                  <option value="true">Yes</option>
+                  <option value="false">No</option>
+                </select>
               </label>
             </div>
 
@@ -565,14 +576,14 @@ export default function AdminPage() {
                   setShowForm(false);
                   setEditingId(null);
                   setFormData({
+                    id: "",
                     name: "",
                     type: "",
-                    capacity: "",
-                    transmission: "",
-                    fuel: "",
-                    price_per_day: "",
+                    seats: "",
+                    pricePerDay: "",
                     image: "",
-                    features: "",
+                    description: "",
+                    available: true,
                   });
                   setImageFile(null);
                   setImagePreview("");
@@ -591,50 +602,58 @@ export default function AdminPage() {
         {vehicles.length === 0 ? (
           <p>No vehicles found. Add some vehicles or initialize the database.</p>
         ) : (
-          <div className={styles.vehiclesTable}>
-            <table>
-              <thead>
-                <tr>
-                  <th>Image</th>
-                  <th>Name</th>
-                  <th>Type</th>
-                  <th>Capacity</th>
-                  <th>Price/Day</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {vehicles.map((vehicle) => (
-                  <tr key={vehicle.id}>
-                    <td>
-                      <img
-                        src={vehicle.image}
-                        alt={vehicle.name}
-                        className={styles.vehicleThumb}
-                      />
-                    </td>
-                    <td>{vehicle.name}</td>
-                    <td>{vehicle.type}</td>
-                    <td>{vehicle.capacity}</td>
-                    <td>${vehicle.price_per_day}</td>
-                    <td>
-                      <button
-                        onClick={() => handleEdit(vehicle)}
-                        className={styles.btnEdit}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(vehicle.id)}
-                        className={styles.btnDelete}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className={styles.vehiclesGrid}>
+            {vehicles.map((vehicle) => (
+              <div key={vehicle.id} className={styles.vehicleCard}>
+                <div className={styles.vehicleImageContainer}>
+                  <img
+                    src={vehicle.image}
+                    alt={vehicle.name}
+                    className={styles.vehicleImage}
+                  />
+                  <div className={styles.vehicleStatus}>
+                    <span className={vehicle.available ? styles.badgeAvailable : styles.badgeUnavailable}>
+                      {vehicle.available ? "Available" : "Unavailable"}
+                    </span>
+                  </div>
+                </div>
+                <div className={styles.vehicleCardContent}>
+                  <h3 className={styles.vehicleName}>{vehicle.name}</h3>
+                  <div className={styles.vehicleDetails}>
+                    <div className={styles.vehicleDetailItem}>
+                      <span className={styles.detailLabel}>Type:</span>
+                      <span className={styles.detailValue}>{vehicle.type}</span>
+                    </div>
+                    <div className={styles.vehicleDetailItem}>
+                      <span className={styles.detailLabel}>Seats:</span>
+                      <span className={styles.detailValue}>{vehicle.seats}</span>
+                    </div>
+                    <div className={styles.vehicleDetailItem}>
+                      <span className={styles.detailLabel}>ID:</span>
+                      <span className={styles.detailValue}>{vehicle.id}</span>
+                    </div>
+                  </div>
+                  <div className={styles.vehiclePrice}>
+                    <span className={styles.priceLabel}>Price per day</span>
+                    <span className={styles.priceValue}>${vehicle.pricePerDay}</span>
+                  </div>
+                  <div className={styles.vehicleActions}>
+                    <button
+                      onClick={() => handleEdit(vehicle)}
+                      className={styles.btnEdit}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(vehicle.id)}
+                      className={styles.btnDelete}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

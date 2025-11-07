@@ -1,72 +1,37 @@
-import Image from "next/image";
+"use client";
+
+import { useState, useEffect } from "react";
+import { useAuth } from "@/lib/AuthContext";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import styles from "./Bookings.module.css";
 
-export const metadata = {
-  title: "My Bookings - DriveNow",
-  description: "View and manage your vehicle rental bookings",
-};
+interface Booking {
+  id: number;
+  vehicle_id: string;
+  vehicle_name: string;
+  customer_name: string;
+  customer_email: string;
+  customer_phone: string;
+  start_date: string;
+  end_date: string;
+  days: number;
+  total_price: number;
+  created_at: string;
+}
 
-// Mock booking data - In a real app, this would come from a database/API
-const bookings = [
-  {
-    id: "BK001",
-    vehicleId: "sedan-1",
-    vehicleName: "Compact Sedan",
-    vehicleImage: "/images/sedan.jpg",
-    status: "confirmed",
-    startDate: "2025-11-10",
-    endDate: "2025-11-15",
-    totalPrice: 225,
-    pickupLocation: "Downtown Office",
-    bookingDate: "2025-11-01",
-  },
-  {
-    id: "BK002",
-    vehicleId: "suv-1",
-    vehicleName: "Family SUV",
-    vehicleImage: "/images/suv.jpg",
-    status: "active",
-    startDate: "2025-11-04",
-    endDate: "2025-11-07",
-    totalPrice: 255,
-    pickupLocation: "Airport Terminal 2",
-    bookingDate: "2025-10-28",
-  },
-  {
-    id: "BK003",
-    vehicleId: "coupe-1",
-    vehicleName: "Luxury Coupe",
-    vehicleImage: "/images/coupe.jpg",
-    status: "completed",
-    startDate: "2025-10-15",
-    endDate: "2025-10-18",
-    totalPrice: 480,
-    pickupLocation: "City Center",
-    bookingDate: "2025-10-10",
-  },
-];
+function getStatusBadge(startDate: string, endDate: string) {
+  const now = new Date();
+  const start = new Date(startDate);
+  const end = new Date(endDate);
 
-function getStatusBadge(status: string) {
-  const statusStyles = {
-    confirmed: styles.statusConfirmed,
-    active: styles.statusActive,
-    completed: styles.statusCompleted,
-    cancelled: styles.statusCancelled,
-  };
-
-  const statusLabels = {
-    confirmed: "Confirmed",
-    active: "Active",
-    completed: "Completed",
-    cancelled: "Cancelled",
-  };
-
-  return (
-    <span className={`${styles.statusBadge} ${statusStyles[status as keyof typeof statusStyles]}`}>
-      {statusLabels[status as keyof typeof statusLabels]}
-    </span>
-  );
+  if (now < start) {
+    return <span className={`${styles.badge} ${styles.confirmed}`}>Upcoming</span>;
+  } else if (now >= start && now <= end) {
+    return <span className={`${styles.badge} ${styles.active}`}>Active</span>;
+  } else {
+    return <span className={`${styles.badge} ${styles.completed}`}>Completed</span>;
+  }
 }
 
 function formatDate(dateString: string) {
@@ -78,14 +43,67 @@ function formatDate(dateString: string) {
   });
 }
 
-function calculateDays(start: string, end: string) {
-  const startDate = new Date(start);
-  const endDate = new Date(end);
-  const days = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-  return days;
-}
-
 export default function BookingsPage() {
+  const { user, loading: authLoading } = useAuth();
+  const router = useRouter();
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/login?redirect=/bookings");
+      return;
+    }
+
+    if (user) {
+      fetchBookings();
+    }
+  }, [user, authLoading, router]);
+
+  const fetchBookings = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("/api/bookings");
+      
+      if (response.status === 401) {
+        router.push("/login?redirect=/bookings");
+        return;
+      }
+
+      if (response.ok) {
+        const data = await response.json();
+        setBookings(data);
+      } else {
+        setError("Failed to load bookings");
+      }
+    } catch (err) {
+      console.error("Error fetching bookings:", err);
+      setError("Failed to load bookings");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (authLoading || loading) {
+    return (
+      <main className={styles.bookingsPage}>
+        <div className={styles.loading}>
+          <div className={styles.spinner}></div>
+          <p>Loading your bookings...</p>
+        </div>
+      </main>
+    );
+  }
+
+  const upcomingBookings = bookings.filter(b => new Date(b.start_date) > new Date());
+  const activeBookings = bookings.filter(b => {
+    const now = new Date();
+    return new Date(b.start_date) <= now && new Date(b.end_date) >= now;
+  });
+  const completedBookings = bookings.filter(b => new Date(b.end_date) < new Date());
+  const totalSpent = bookings.reduce((sum, b) => sum + Number(b.total_price), 0);
+
   return (
     <main className={styles.bookingsPage}>
       {/* Hero Section */}
@@ -104,55 +122,49 @@ export default function BookingsPage() {
           <div className={styles.statCard}>
             <div className={styles.statIcon}>📅</div>
             <div className={styles.statContent}>
-              <div className={styles.statValue}>
-                {bookings.filter(b => b.status === 'confirmed').length}
-              </div>
+              <div className={styles.statValue}>{upcomingBookings.length}</div>
               <div className={styles.statLabel}>Upcoming</div>
             </div>
           </div>
           <div className={styles.statCard}>
             <div className={styles.statIcon}>🚗</div>
             <div className={styles.statContent}>
-              <div className={styles.statValue}>
-                {bookings.filter(b => b.status === 'active').length}
-              </div>
+              <div className={styles.statValue}>{activeBookings.length}</div>
               <div className={styles.statLabel}>Active</div>
             </div>
           </div>
           <div className={styles.statCard}>
-            <div className={styles.statIcon}>✓</div>
+            <div className={styles.statIcon}>✅</div>
             <div className={styles.statContent}>
-              <div className={styles.statValue}>
-                {bookings.filter(b => b.status === 'completed').length}
-              </div>
+              <div className={styles.statValue}>{completedBookings.length}</div>
               <div className={styles.statLabel}>Completed</div>
             </div>
           </div>
           <div className={styles.statCard}>
             <div className={styles.statIcon}>💰</div>
             <div className={styles.statContent}>
-              <div className={styles.statValue}>
-                ${bookings.reduce((sum, b) => sum + b.totalPrice, 0)}
-              </div>
+              <div className={styles.statValue}>${totalSpent.toFixed(0)}</div>
               <div className={styles.statLabel}>Total Spent</div>
             </div>
           </div>
         </div>
 
+        {error && (
+          <div className={styles.error}>
+            <p>{error}</p>
+            <button onClick={fetchBookings} className={styles.retryBtn}>
+              Try Again
+            </button>
+          </div>
+        )}
+
         {/* Bookings List */}
         <div className={styles.bookingsSection}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>All Bookings</h2>
-            <Link href="/vehicles" className={styles.btnPrimary}>
-              + New Booking
-            </Link>
-          </div>
-
           {bookings.length === 0 ? (
             <div className={styles.emptyState}>
-              <div className={styles.emptyIcon}>📋</div>
-              <h3>No bookings yet</h3>
-              <p>Start exploring our vehicle fleet and make your first booking!</p>
+              <div className={styles.emptyIcon}>🚗</div>
+              <h2>No Bookings Yet</h2>
+              <p>You haven't made any vehicle rentals yet. Start exploring our fleet!</p>
               <Link href="/vehicles" className={styles.btnPrimary}>
                 Browse Vehicles
               </Link>
@@ -161,96 +173,80 @@ export default function BookingsPage() {
             <div className={styles.bookingsList}>
               {bookings.map((booking) => (
                 <div key={booking.id} className={styles.bookingCard}>
-                  <div className={styles.bookingImage}>
-                    <Image
-                      src={booking.vehicleImage}
-                      alt={booking.vehicleName}
-                      width={200}
-                      height={133}
-                      className={styles.vehicleImg}
-                    />
+                  <div className={styles.bookingHeader}>
+                    <div className={styles.bookingInfo}>
+                      <h3 className={styles.vehicleName}>{booking.vehicle_name}</h3>
+                      <p className={styles.bookingId}>Booking #{booking.id}</p>
+                    </div>
+                    {getStatusBadge(booking.start_date, booking.end_date)}
                   </div>
-                  
-                  <div className={styles.bookingContent}>
-                    <div className={styles.bookingHeader}>
-                      <div>
-                        <div className={styles.bookingId}>Booking #{booking.id}</div>
-                        <h3 className={styles.vehicleName}>{booking.vehicleName}</h3>
-                      </div>
-                      {getStatusBadge(booking.status)}
-                    </div>
 
-                    <div className={styles.bookingDetails}>
+                  <div className={styles.bookingDetails}>
+                    <div className={styles.detailRow}>
                       <div className={styles.detailItem}>
-                        <span className={styles.detailIcon}>📅</span>
-                        <div>
-                          <div className={styles.detailLabel}>Rental Period</div>
-                          <div className={styles.detailValue}>
-                            {formatDate(booking.startDate)} - {formatDate(booking.endDate)}
-                            <span className={styles.duration}>
-                              ({calculateDays(booking.startDate, booking.endDate)} days)
-                            </span>
-                          </div>
-                        </div>
+                        <span className={styles.detailLabel}>📅 Pickup</span>
+                        <span className={styles.detailValue}>
+                          {formatDate(booking.start_date)}
+                        </span>
                       </div>
-
                       <div className={styles.detailItem}>
-                        <span className={styles.detailIcon}>📍</span>
-                        <div>
-                          <div className={styles.detailLabel}>Pick-up Location</div>
-                          <div className={styles.detailValue}>{booking.pickupLocation}</div>
-                        </div>
-                      </div>
-
-                      <div className={styles.detailItem}>
-                        <span className={styles.detailIcon}>💰</span>
-                        <div>
-                          <div className={styles.detailLabel}>Total Price</div>
-                          <div className={styles.detailValue}>${booking.totalPrice}</div>
-                        </div>
+                        <span className={styles.detailLabel}>📅 Return</span>
+                        <span className={styles.detailValue}>
+                          {formatDate(booking.end_date)}
+                        </span>
                       </div>
                     </div>
 
-                    <div className={styles.bookingActions}>
-                      <Link href={`/vehicles/${booking.vehicleId}`} className={styles.btnSecondary}>
-                        View Vehicle
-                      </Link>
-                      {booking.status === 'confirmed' && (
-                        <>
-                          <button className={styles.btnSecondary}>Modify</button>
-                          <button className={styles.btnCancel}>Cancel</button>
-                        </>
-                      )}
-                      {booking.status === 'active' && (
-                        <button className={styles.btnPrimary}>Extend Rental</button>
-                      )}
-                      {booking.status === 'completed' && (
-                        <button className={styles.btnSecondary}>Book Again</button>
-                      )}
+                    <div className={styles.detailRow}>
+                      <div className={styles.detailItem}>
+                        <span className={styles.detailLabel}>⏱️ Duration</span>
+                        <span className={styles.detailValue}>{booking.days} days</span>
+                      </div>
+                      <div className={styles.detailItem}>
+                        <span className={styles.detailLabel}>💵 Total Price</span>
+                        <span className={styles.detailValue}>
+                          ${Number(booking.total_price).toFixed(2)}
+                        </span>
+                      </div>
                     </div>
+
+                    <div className={styles.detailRow}>
+                      <div className={styles.detailItem}>
+                        <span className={styles.detailLabel}>👤 Name</span>
+                        <span className={styles.detailValue}>{booking.customer_name}</span>
+                      </div>
+                      <div className={styles.detailItem}>
+                        <span className={styles.detailLabel}>📞 Phone</span>
+                        <span className={styles.detailValue}>{booking.customer_phone}</span>
+                      </div>
+                    </div>
+
+                    <div className={styles.detailRow}>
+                      <div className={styles.detailItem}>
+                        <span className={styles.detailLabel}>📧 Email</span>
+                        <span className={styles.detailValue}>{booking.customer_email}</span>
+                      </div>
+                      <div className={styles.detailItem}>
+                        <span className={styles.detailLabel}>📅 Booked On</span>
+                        <span className={styles.detailValue}>
+                          {formatDate(booking.created_at)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className={styles.bookingActions}>
+                    <Link
+                      href={`/vehicles/${booking.vehicle_id}`}
+                      className={styles.btnSecondary}
+                    >
+                      View Vehicle
+                    </Link>
                   </div>
                 </div>
               ))}
             </div>
           )}
-        </div>
-
-        {/* Help Section */}
-        <div className={styles.helpSection}>
-          <div className={styles.helpCard}>
-            <h3 className={styles.helpTitle}>Need Help with Your Booking?</h3>
-            <p className={styles.helpText}>
-              Our support team is available 24/7 to assist you with any questions or modifications.
-            </p>
-            <div className={styles.helpActions}>
-              <Link href="/contact" className={styles.btnPrimary}>
-                Contact Support
-              </Link>
-              <a href="tel:+1234567890" className={styles.btnSecondary}>
-                📞 Call Now
-              </a>
-            </div>
-          </div>
         </div>
       </div>
     </main>

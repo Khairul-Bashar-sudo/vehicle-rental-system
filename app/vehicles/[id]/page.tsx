@@ -193,11 +193,20 @@ export default async function VehiclePage({ params }: Props) {
                   <span className={styles.summaryValue}>${vehicle.pricePerDay}</span>
                 </div>
               </div>
-              <ProtectedBookingForm
-                vehicleId={vehicle.id}
-                vehicleName={vehicle.name}
-                pricePerDay={vehicle.pricePerDay}
-              />
+              {vehicle.available ? (
+                <ProtectedBookingForm
+                  vehicleId={vehicle.id}
+                  vehicleName={vehicle.name}
+                  pricePerDay={vehicle.pricePerDay}
+                />
+              ) : (
+                <div className={styles.unavailableMessage}>
+                  <p>🚫 This vehicle is currently unavailable for booking.</p>
+                  <Link href="/vehicles" className={styles.btnBrowse}>
+                    Browse Available Vehicles
+                  </Link>
+                </div>
+              )}
             </div>
 
             {/* Support Card */}

@@ -49,8 +49,9 @@ export async function POST(request: NextRequest) {
     const filepath = join(uploadsDir, filename);
     await writeFile(filepath, buffer);
 
-    // Return the public URL path
-    const imageUrl = `/uploads/${filename}`;
+    // Return both the static path and API route path
+    // Using API route ensures the image is always accessible
+    const imageUrl = `/api/uploads/${filename}`;
 
     return NextResponse.json({
       success: true,

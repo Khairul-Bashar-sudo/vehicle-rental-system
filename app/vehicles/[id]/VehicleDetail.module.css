@@ -342,6 +342,40 @@
   color: var(--primary);
 }
 
+/* Unavailable Message */
+.unavailableMessage {
+  padding: 24px;
+  text-align: center;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 12px;
+  margin-top: 8px;
+}
+
+.unavailableMessage p {
+  margin: 0 0 16px 0;
+  color: #dc2626;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.btnBrowse {
+  display: inline-block;
+  padding: 12px 24px;
+  background: var(--primary);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btnBrowse:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
 /* Support Card */
 .supportTitle {
   font-size: 1.25rem;
