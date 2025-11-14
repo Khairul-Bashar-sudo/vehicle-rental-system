@@ -1,4 +1,4 @@
-import VehicleList from "../components/VehicleList";
+import VehicleFilterWrapper from "../components/VehicleFilterWrapper";
 import styles from "./Vehicles.module.css";
 import type { Vehicle } from "@/types/vehicle";
 
@@ -7,26 +7,62 @@ export const metadata = {
   description: "Browse our wide selection of rental vehicles from sedans to luxury coupes",
 };
 
-async function getVehicles(): Promise<Vehicle[]> {
+interface VehiclesPageProps {
+  searchParams: Promise<{
+    type?: string;
+    minSeats?: string;
+    maxPrice?: string;
+    availability?: string;
+    sortBy?: string;
+  }>;
+}
+
+async function getVehicles(searchParams: {
+  type?: string;
+  minSeats?: string;
+  maxPrice?: string;
+  availability?: string;
+  sortBy?: string;
+}): Promise<{ vehicles: Vehicle[], allVehicles: Vehicle[] }> {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-    const res = await fetch(`${baseUrl}/api/vehicles`, {
-      cache: 'no-store', // Always get fresh data
+    
+    // Get all vehicles for filter options
+    const allVehiclesRes = await fetch(`${baseUrl}/api/vehicles`, {
+      cache: 'no-store',
+    });
+    const allVehicles = allVehiclesRes.ok ? await allVehiclesRes.json() : [];
+
+    // Build query string for filtered vehicles
+    const params = new URLSearchParams();
+    if (searchParams.type) params.set('type', searchParams.type);
+    if (searchParams.minSeats) params.set('minSeats', searchParams.minSeats);
+    if (searchParams.maxPrice) params.set('maxPrice', searchParams.maxPrice);
+    if (searchParams.availability) params.set('availability', searchParams.availability);
+    if (searchParams.sortBy) params.set('sortBy', searchParams.sortBy);
+
+    const queryString = params.toString();
+    const url = `${baseUrl}/api/vehicles${queryString ? `?${queryString}` : ''}`;
+    
+    const res = await fetch(url, {
+      cache: 'no-store',
     });
     
     if (!res.ok) {
       throw new Error('Failed to fetch vehicles');
     }
     
-    return res.json();
+    const vehicles = await res.json();
+    return { vehicles, allVehicles };
   } catch (error) {
     console.error('Error fetching vehicles:', error);
-    return [];
+    return { vehicles: [], allVehicles: [] };
   }
 }
 
-export default async function VehiclesPage() {
-  const vehicles = await getVehicles();
+export default async function VehiclesPage({ searchParams }: VehiclesPageProps) {
+  const params = await searchParams;
+  const { vehicles, allVehicles } = await getVehicles(params);
 
   return (
     <main className={styles.vehiclesPage}>
@@ -40,12 +76,11 @@ export default async function VehiclesPage() {
       </div>
       
       <div className={styles.container}>
-        <div className={styles.filters}>
-          <div className={styles.filterInfo}>
-            <span className={styles.resultCount}>{vehicles.length} vehicles available</span>
-          </div>
-        </div>
-        <VehicleList items={vehicles} />
+        <VehicleFilterWrapper 
+          vehicles={vehicles} 
+          allVehicles={allVehicles}
+          currentFilters={params}
+        />
       </div>
     </main>
   );

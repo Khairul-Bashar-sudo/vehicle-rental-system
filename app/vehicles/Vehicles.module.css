@@ -31,25 +31,6 @@
   line-height: 1.6;
 }
 
-.filters {
-  padding: 32px 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.filterInfo {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.resultCount {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
 /* Responsive */
 @media (max-width: 768px) {
   .title {
@@ -62,11 +43,5 @@
 
   .hero {
     padding: 40px 24px;
-  }
-
-  .filters {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
   }
 }
