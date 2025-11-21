@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
 
     // Build the WHERE clause
     const conditions: string[] = [];
-    const params: any[] = [];
+    const params: (string | number)[] = [];
 
     if (type && type !== 'all') {
       conditions.push('type = ?');
@@ -93,9 +93,9 @@ export async function POST(request: NextRequest) {
     }
 
     await query(
-      `INSERT INTO vehicles (id, name, type, seats, pricePerDay, image, description, available)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [id, name, type, seats, pricePerDay, image || null, description || null, available ?? true]
+      `INSERT INTO vehicles (id, name, type, seats, pricePerDay, image, description, available, quantity)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [id, name, type, seats, pricePerDay, image || null, description || null, available ?? true, body.quantity || 1]
     );
 
     return NextResponse.json({ message: 'Vehicle created successfully' }, { status: 201 });

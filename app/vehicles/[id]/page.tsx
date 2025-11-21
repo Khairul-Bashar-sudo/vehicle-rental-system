@@ -1,4 +1,3 @@
-import BookingForm from "../../components/BookingForm";
 import ProtectedBookingForm from "./ProtectedBookingForm";
 import Image from "next/image";
 import Link from "next/link";

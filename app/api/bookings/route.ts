@@ -21,7 +21,7 @@ interface Session {
   user_id: number;
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Get session from cookies
     const cookieStore = await cookies();
@@ -127,6 +127,67 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate dates
+    const startDate = new Date(start_date);
+    const endDate = new Date(end_date);
+    
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      return NextResponse.json(
+        { error: 'Invalid date format' },
+        { status: 400 }
+      );
+    }
+
+    if (startDate >= endDate) {
+      return NextResponse.json(
+        { error: 'End date must be after start date' },
+        { status: 400 }
+      );
+    }
+
+    // Check vehicle availability
+    const vehicles = await query<Array<{ quantity: number; available: boolean }>>(
+      'SELECT quantity, available FROM vehicles WHERE id = ?',
+      [vehicle_id]
+    );
+
+    if (vehicles.length === 0) {
+      return NextResponse.json(
+        { error: 'Vehicle not found' },
+        { status: 404 }
+      );
+    }
+
+    const vehicle = vehicles[0];
+
+    if (!vehicle.available) {
+      return NextResponse.json(
+        { error: 'This vehicle is currently unavailable' },
+        { status: 400 }
+      );
+    }
+
+    // Count overlapping bookings
+    const bookingCounts = await query<Array<{ booked_count: number }>>(
+      `SELECT COUNT(*) as booked_count 
+       FROM bookings 
+       WHERE vehicle_id = ? 
+         AND start_date <= ? 
+         AND end_date >= ?`,
+      [vehicle_id, end_date, start_date]
+    );
+
+    const bookedCount = bookingCounts[0].booked_count;
+    const totalQuantity = vehicle.quantity || 1;
+    const availableCount = totalQuantity - bookedCount;
+
+    if (availableCount <= 0) {
+      return NextResponse.json(
+        { error: 'No vehicles available for the selected dates. Please choose different dates.' },
+        { status: 400 }
+      );
+    }
+
     // Create booking
     const result = await query(
       `INSERT INTO bookings 
@@ -151,7 +212,7 @@ export async function POST(request: NextRequest) {
       success: true,
       message: 'Booking created successfully',
       booking: {
-        id: (result as any).insertId,
+        id: (result as { insertId: number }).insertId,
         vehicle_id,
         vehicle_name,
         customer_name,

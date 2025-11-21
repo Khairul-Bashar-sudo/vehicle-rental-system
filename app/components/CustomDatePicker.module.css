@@ -1,0 +1,491 @@
+/* Date Picker Container */
+.datePicker {
+  width: 100%;
+  max-width: 100%;
+  background: var(--card-bg, #ffffff);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Header Section */
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.headerLabel {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  opacity: 0.9;
+  margin-bottom: 4px;
+}
+
+.monthLabel {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.navGroup {
+  display: flex;
+  gap: 8px;
+}
+
+.navButton {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 1.125rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+.navButton:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.navButton:not(:disabled):hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.navButton:not(:disabled):active {
+  transform: scale(0.95);
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 16px 24px;
+  background: var(--card-bg, #ffffff);
+  border-bottom: 1px solid var(--border, #e5e7eb);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary, #6b7280);
+}
+
+.legendDot {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.legendAvailable {
+  background: linear-gradient(135deg, #10b981, #059669);
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+.legendUnavailable {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+.legendSelected {
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  box-shadow: 0 2px 4px rgba(99, 102, 241, 0.3);
+}
+
+/* Calendar Grid */
+.calendarGrid {
+  background: var(--card-bg, #ffffff);
+}
+
+.weekRow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background: var(--muted, #f9fafb);
+  border-bottom: 1px solid var(--border, #e5e7eb);
+}
+
+.weekDay {
+  text-align: center;
+  padding: 12px 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-secondary, #6b7280);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.daysGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  padding: 8px;
+  gap: 6px;
+  background: var(--card-bg, #ffffff);
+  min-height: 280px;
+}
+
+/* Day Buttons */
+.dayButton {
+  aspect-ratio: 1;
+  border: none;
+  background: transparent;
+  border-radius: 10px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary, #111827);
+  min-height: 44px;
+}
+
+.dayButton span {
+  position: relative;
+  z-index: 1;
+}
+
+/* Outside current month */
+.outsideDay {
+  color: var(--text-muted, #d1d5db);
+  opacity: 0.4;
+}
+
+/* Available days - green */
+.availableDay {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(16, 185, 129, 0.3);
+}
+
+.availableDay:hover:not(:disabled) {
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+  transform: scale(1.05);
+}
+
+/* Unavailable days - red with strikethrough */
+.unavailableDay {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(239, 68, 68, 0.3);
+  position: relative;
+}
+
+.unavailableDay::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background: white;
+  transform: translateY(-50%) rotate(-15deg);
+}
+
+/* Loading state */
+.loadingDay {
+  background: linear-gradient(
+    90deg, 
+    rgba(226, 232, 240, 0.4) 0%, 
+    rgba(226, 232, 240, 0.8) 50%, 
+    rgba(226, 232, 240, 0.4) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  color: var(--text-muted, #9ca3af);
+  cursor: wait;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Range selection */
+.inRangeDay {
+  background: linear-gradient(135deg, #c7d2fe, #a5b4fc);
+  color: #4338ca;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(99, 102, 241, 0.2);
+}
+
+.previewRangeDay {
+  background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+  color: #4f46e5;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+/* Selected edges */
+.selectedEdge {
+  background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
+  color: white !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.5) !important;
+  transform: scale(1.08);
+}
+
+/* Disabled state */
+.disabledDay {
+  opacity: 0.3;
+  cursor: not-allowed !important;
+}
+
+.disabledDay:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Hover effects for enabled days */
+.dayButton:not(.disabledDay):not(.selectedEdge):not(.loadingDay):hover {
+  transform: scale(1.08);
+  filter: brightness(1.05);
+  z-index: 2;
+}
+
+/* Selection Summary */
+.selectionSummary {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 16px;
+  padding: 20px 24px;
+  background: var(--card-bg, #ffffff);
+  border-top: 1px solid var(--border, #e5e7eb);
+  align-items: center;
+}
+
+.selectionSummary > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.summaryLabel {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-secondary, #6b7280);
+  letter-spacing: 0.05em;
+}
+
+.summaryValue {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary, #111827);
+}
+
+/* Clear Button */
+.clearButton {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 2px solid var(--border, #e5e7eb);
+  background: var(--card-bg, #ffffff);
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--text-primary, #374151);
+  white-space: nowrap;
+}
+
+.clearButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.clearButton:not(:disabled):hover {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  border-color: transparent;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.clearButton:not(:disabled):active {
+  transform: translateY(0);
+}
+
+/* Feedback message */
+.feedback {
+  padding: 16px 24px;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05));
+  border-top: 1px solid rgba(239, 68, 68, 0.2);
+  color: #991b1b;
+  font-weight: 600;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* Dark theme support */
+[data-theme="dark"] .datePicker,
+[data-theme="dark"] .calendarGrid,
+[data-theme="dark"] .weekRow,
+[data-theme="dark"] .daysGrid,
+[data-theme="dark"] .legend,
+[data-theme="dark"] .selectionSummary,
+[data-theme="dark"] .clearButton {
+  background: var(--card-bg, #1f2937);
+}
+
+[data-theme="dark"] .weekRow {
+  background: var(--muted, #111827);
+}
+
+[data-theme="dark"] .weekDay,
+[data-theme="dark"] .summaryLabel {
+  color: var(--text-secondary, #9ca3af);
+}
+
+[data-theme="dark"] .summaryValue,
+[data-theme="dark"] .dayButton {
+  color: var(--text-primary, #f9fafb);
+}
+
+[data-theme="dark"] .outsideDay {
+  color: var(--text-muted, #4b5563);
+}
+
+[data-theme="dark"] .clearButton {
+  color: var(--text-primary, #f9fafb);
+  border-color: var(--border, #374151);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .headerRow {
+    padding: 16px 20px;
+  }
+
+  .monthLabel {
+    font-size: 1.25rem;
+  }
+
+  .navButton {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+
+  .legend {
+    padding: 12px 20px;
+    gap: 16px;
+  }
+
+  .daysGrid {
+    padding: 6px;
+    gap: 4px;
+    min-height: 240px;
+  }
+
+  .dayButton {
+    min-height: 38px;
+    font-size: 0.875rem;
+    border-radius: 8px;
+  }
+
+  .selectionSummary {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 16px 20px;
+  }
+
+  .selectionSummary > div:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .clearButton {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .summaryValue {
+    font-size: 0.9375rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .headerRow {
+    padding: 14px 16px;
+  }
+
+  .monthLabel {
+    font-size: 1.125rem;
+  }
+
+  .headerLabel {
+    font-size: 0.6875rem;
+  }
+
+  .legend {
+    padding: 10px 16px;
+    gap: 12px;
+  }
+
+  .legendItem {
+    font-size: 0.8125rem;
+  }
+
+  .legendDot {
+    width: 16px;
+    height: 16px;
+  }
+
+  .weekDay {
+    font-size: 0.6875rem;
+    padding: 10px 2px;
+  }
+
+  .daysGrid {
+    padding: 4px;
+    gap: 3px;
+    min-height: 220px;
+  }
+
+  .dayButton {
+    min-height: 34px;
+    font-size: 0.8125rem;
+    border-radius: 6px;
+  }
+
+  .selectionSummary {
+    padding: 14px 16px;
+  }
+
+  .summaryLabel {
+    font-size: 0.625rem;
+  }
+
+  .summaryValue {
+    font-size: 0.875rem;
+  }
+
+  .clearButton {
+    font-size: 0.8125rem;
+    padding: 10px;
+  }
+}

@@ -39,7 +39,7 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
-    const { name, type, seats, pricePerDay, image, description, available } = body;
+    const { name, type, seats, pricePerDay, image, description, available, quantity } = body;
 
     // Validate required fields
     if (!name || !type || !seats || !pricePerDay) {
@@ -52,9 +52,9 @@ export async function PUT(
     const result = await query<{ affectedRows: number }>(
       `UPDATE vehicles 
        SET name = ?, type = ?, seats = ?, pricePerDay = ?, 
-           image = ?, description = ?, available = ?
+           image = ?, description = ?, available = ?, quantity = ?
        WHERE id = ?`,
-      [name, type, seats, pricePerDay, image || null, description || null, available ?? true, id]
+      [name, type, seats, pricePerDay, image || null, description || null, available ?? true, quantity || 1, id]
     );
 
     if (result.affectedRows === 0) {

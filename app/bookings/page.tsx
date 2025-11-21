@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/lib/AuthContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -50,18 +50,7 @@ export default function BookingsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    if (!authLoading && !user) {
-      router.push("/login?redirect=/bookings");
-      return;
-    }
-
-    if (user) {
-      fetchBookings();
-    }
-  }, [user, authLoading, router]);
-
-  const fetchBookings = async () => {
+  const fetchBookings = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch("/api/bookings");
@@ -83,7 +72,18 @@ export default function BookingsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/login?redirect=/bookings");
+      return;
+    }
+
+    if (user) {
+      fetchBookings();
+    }
+  }, [user, authLoading, router, fetchBookings]);
 
   if (authLoading || loading) {
     return (
@@ -164,7 +164,7 @@ export default function BookingsPage() {
             <div className={styles.emptyState}>
               <div className={styles.emptyIcon}>🚗</div>
               <h2>No Bookings Yet</h2>
-              <p>You haven't made any vehicle rentals yet. Start exploring our fleet!</p>
+              <p>You haven&apos;t made any vehicle rentals yet. Start exploring our fleet!</p>
               <Link href="/vehicles" className={styles.btnPrimary}>
                 Browse Vehicles
               </Link>

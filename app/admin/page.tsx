@@ -13,6 +13,7 @@ interface DbVehicle {
   image: string;
   description: string;
   available: boolean;
+  quantity: number;
 }
 
 export default function AdminPage() {
@@ -36,6 +37,7 @@ export default function AdminPage() {
     image: "",
     description: "",
     available: true,
+    quantity: "1",
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
@@ -175,6 +177,7 @@ export default function AdminPage() {
           image: imageUrl,
           seats: parseInt(formData.seats),
           pricePerDay: parseFloat(formData.pricePerDay),
+          quantity: parseInt(formData.quantity),
         }),
       });
 
@@ -190,6 +193,7 @@ export default function AdminPage() {
           image: "",
           description: "",
           available: true,
+          quantity: "1",
         });
         setImageFile(null);
         setImagePreview("");
@@ -233,6 +237,7 @@ export default function AdminPage() {
           image: imageUrl,
           seats: parseInt(formData.seats),
           pricePerDay: parseFloat(formData.pricePerDay),
+          quantity: parseInt(formData.quantity),
         }),
       });
 
@@ -248,6 +253,7 @@ export default function AdminPage() {
           image: "",
           description: "",
           available: true,
+          quantity: "1",
         });
         setImageFile(null);
         setImagePreview("");
@@ -274,6 +280,7 @@ export default function AdminPage() {
       image: vehicle.image,
       description: vehicle.description || "",
       available: vehicle.available,
+      quantity: (vehicle.quantity || 1).toString(),
     });
     setImagePreview(vehicle.image);
     setImageFile(null);
@@ -297,28 +304,6 @@ export default function AdminPage() {
       }
     } catch {
       setError("Failed to delete vehicle");
-    }
-  };
-
-  const handleInitDatabase = async () => {
-    if (!confirm("This will initialize the database. Continue?")) return;
-
-    setLoading(true);
-    try {
-      const response = await fetch("/api/init-db", {
-        method: "POST",
-      });
-
-      if (response.ok) {
-        setSuccess("Database initialized successfully!");
-        await fetchVehicles();
-      } else {
-        setError("Failed to initialize database");
-      }
-    } catch {
-      setError("Failed to initialize database");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -369,9 +354,6 @@ export default function AdminPage() {
           >
             View Bookings
           </button>
-          <button onClick={handleInitDatabase} className={styles.btnSecondary}>
-            Initialize Database
-          </button>
           <button onClick={handleLogout} className={styles.btnSecondary}>
             Logout
           </button>
@@ -396,6 +378,7 @@ export default function AdminPage() {
                 image: "",
                 description: "",
                 available: true,
+                quantity: "1",
               });
               setImageFile(null);
               setImagePreview("");
@@ -470,6 +453,19 @@ export default function AdminPage() {
                   type="number"
                   name="seats"
                   value={formData.seats}
+                  onChange={handleInputChange}
+                  required
+                  min="1"
+                  className={styles.formInput}
+                />
+              </label>
+
+              <label className={styles.formLabel}>
+                Quantity (Inventory)
+                <input
+                  type="number"
+                  name="quantity"
+                  value={formData.quantity}
                   onChange={handleInputChange}
                   required
                   min="1"
@@ -584,6 +580,7 @@ export default function AdminPage() {
                     image: "",
                     description: "",
                     available: true,
+                    quantity: "1",
                   });
                   setImageFile(null);
                   setImagePreview("");
@@ -627,6 +624,10 @@ export default function AdminPage() {
                     <div className={styles.vehicleDetailItem}>
                       <span className={styles.detailLabel}>Seats:</span>
                       <span className={styles.detailValue}>{vehicle.seats}</span>
+                    </div>
+                    <div className={styles.vehicleDetailItem}>
+                      <span className={styles.detailLabel}>Quantity:</span>
+                      <span className={styles.detailValue}>{vehicle.quantity || 1}</span>
                     </div>
                     <div className={styles.vehicleDetailItem}>
                       <span className={styles.detailLabel}>ID:</span>

@@ -7,4 +7,5 @@ export type Vehicle = {
   image?: string;
   description?: string;
   available?: boolean;
+  quantity?: number;
 };
