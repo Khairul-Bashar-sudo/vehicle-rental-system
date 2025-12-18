@@ -598,6 +598,14 @@ npm run lint
 
 This project is private. Unauthorized use is prohibited.
 
+## Team & Contributions
+
+This project was developed as a group project.
+
+Contributions:
+- Yaksh Baria: Core application logic and feature implementation
+- Khairul Bashar: Database design and management (schema design, queries, data handling)
+
 ---
 
 **Questions?** Check the `.env.example` file for configuration template or review the IMPLEMENTATION_SUMMARY.md for detailed implementation notes.
