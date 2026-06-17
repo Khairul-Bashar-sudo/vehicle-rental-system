@@ -143,6 +143,12 @@ export default function AdminBookingsPage() {
           >
             Manage Vehicles
           </button>
+          <button
+            onClick={() => router.push("/admin/customers")}
+            className={styles.btnSecondary}
+          >
+            Customers
+          </button>
           <button onClick={handleLogout} className={styles.btnSecondary}>
             Logout
           </button>
