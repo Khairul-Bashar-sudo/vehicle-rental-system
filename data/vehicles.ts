@@ -10,6 +10,7 @@ export const vehicles: Vehicle[] = [
     image: "/images/sedan.jpg",
     description: "A fuel efficient compact sedan, easy to park and comfortable for city trips.",
     available: true,
+    quantity: 3,
   },
   {
     id: "suv-1",
@@ -20,6 +21,7 @@ export const vehicles: Vehicle[] = [
     image: "/images/suv.jpg",
     description: "Spacious SUV with room for luggage and family. Great for longer trips.",
     available: true,
+    quantity: 2,
   },
   {
     id: "van-1",
@@ -30,6 +32,7 @@ export const vehicles: Vehicle[] = [
     image: "/images/van.jpg",
     description: "Reliable cargo van for moving goods or group trips with lots of gear.",
     available: false,
+    quantity: 1,
   },
   {
     id: "lux-1",
@@ -40,6 +43,7 @@ export const vehicles: Vehicle[] = [
     image: "/images/coupe.jpg",
     description: "Premium coupe for a stylish ride and elevated comfort.",
     available: true,
+    quantity: 1,
   },
   {
     id: "bike-1",
@@ -50,6 +54,7 @@ export const vehicles: Vehicle[] = [
     image: "/images/kawasaki-ninja.jpg",
     description: "Supercharged hypersport beast with cutting-edge technology. Experience raw power and precision.",
     available: true,
+    quantity: 2,
   },
   {
     id: "bike-2",
@@ -60,6 +65,7 @@ export const vehicles: Vehicle[] = [
     image: "/images/royal-enfield.jpg",
     description: "Classic café racer with modern reliability. Perfect blend of retro styling and contemporary performance.",
     available: true,
+    quantity: 3,
   },
   {
     id: "bike-3",
@@ -70,6 +76,7 @@ export const vehicles: Vehicle[] = [
     image: "/images/ducati.jpg",
     description: "Italian superbike excellence with MotoGP-derived technology. Pure racing DNA on two wheels.",
     available: true,
+    quantity: 1,
   },
   {
     id: "bike-4",
@@ -80,6 +87,7 @@ export const vehicles: Vehicle[] = [
     image: "/images/harley-davidson.jpg",
     description: "Iconic American cruiser with legendary Milwaukee-Eight engine. Built for long-distance touring.",
     available: true,
+    quantity: 2,
   },
   {
     id: "bike-5",
@@ -90,5 +98,6 @@ export const vehicles: Vehicle[] = [
     image: "/images/bmw-bike.jpg",
     description: "German engineering at its finest. Track-ready superbike with advanced electronics and sublime handling.",
     available: true,
+    quantity: 2,
   },
 ];

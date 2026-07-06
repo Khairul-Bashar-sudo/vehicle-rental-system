@@ -5,10 +5,10 @@ import { initializeDatabase, query } from '@/lib/db';
 export async function POST() {
   try {
     await initializeDatabase();
-    
+
     // Check if we need to seed initial data
     const vehicles: { count: number }[] = await query('SELECT COUNT(*) as count FROM vehicles');
-    
+
     if (vehicles[0].count === 0) {
       // Seed initial vehicle data
       const initialVehicles = [
@@ -32,9 +32,9 @@ export async function POST() {
       }
     }
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       message: 'Database initialized successfully',
-      seeded: vehicles[0].count === 0 
+      seeded: vehicles[0].count === 0
     });
   } catch (error) {
     console.error('Error initializing database:', error);

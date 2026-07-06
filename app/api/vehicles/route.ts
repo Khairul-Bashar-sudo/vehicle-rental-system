@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { query, initializeDatabase } from '@/lib/db';
+import { query } from '@/lib/db';
 import type { Vehicle } from '@/types/vehicle';
 
 // GET all vehicles with optional filtering and sorting
 export async function GET(request: NextRequest) {
   try {
-
-    await initializeDatabase();
 
     const searchParams = request.nextUrl.searchParams;
     
@@ -84,9 +82,6 @@ export async function GET(request: NextRequest) {
 // POST create new vehicle
 export async function POST(request: NextRequest) {
   try {
-    
-    await initializeDatabase();
-
     const body = await request.json();
     const { id, name, type, seats, pricePerDay, image, description, available } = body;
 
