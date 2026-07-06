@@ -1,4 +1,6 @@
+import { AnyARecord } from 'dns';
 import mysql from 'mysql2/promise';
+import { AnyActionArg } from 'react';
 
 // Database connection pool
 let pool: mysql.Pool | null = null;
@@ -19,7 +21,7 @@ export function getPool() {
   return pool;
 }
 
-export async function query<T = unknown>(sql: string, params?: unknown[]): Promise<T> {
+export async function query<T = unknown>(sql: string, params?: any[]): Promise<T> {
   const connection = await getPool().getConnection();
   try {
     const [results] = await connection.execute(sql, params);
